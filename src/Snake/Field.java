@@ -15,7 +15,13 @@ public class Field extends Pane {
 	private int w, h;
 
 	ArrayList<Block> blocks = new ArrayList<Block>();
-	int score = 0;
+	
+	ArrayList<Block> obsBlock = new ArrayList<Block>();
+	  static int score = 0;
+
+	public static int getScore() {
+		return score;
+	}
 
 	Food f;
 	Snake snake;
@@ -28,7 +34,12 @@ public class Field extends Pane {
 		setBackground(new Background(new BackgroundFill(Color.WHITE, null, null)));
 		setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, new BorderWidths(1))));
 		addFood();
-
+	}
+	
+	public void addObs(Obstacle block) {
+		for (int x = 0 ; x < block.blocks.size() ; x++) {
+			addObsBlock(block.blocks.get(x));
+		}
 	}
 
 	public void addSnake(Snake s) {
@@ -37,6 +48,13 @@ public class Field extends Pane {
 			addBlock(b);
 		}
 
+	}
+
+	private void addObsBlock(Block b) {
+		// TODO Auto-generated method stub
+		b.setFill(Color.ORANGE);
+		getChildren().add(b);
+		obsBlock.add(b);
 	}
 
 	// Update method that mooves the blocks
@@ -61,6 +79,11 @@ public class Field extends Pane {
 				}
 			}
 		}
+		for (Block b: obsBlock) {
+			if (b.posX == snake.head.posX && b.posY == snake.head.posY) {
+				return true;
+			}
+		}
 		return false;
 	}
 
@@ -71,6 +94,9 @@ public class Field extends Pane {
 	}
 
 	private void addBlock(Block b) {
+		
+	
+		
 		getChildren().add(b);
 		blocks.add(b);
 

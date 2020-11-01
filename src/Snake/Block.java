@@ -13,6 +13,7 @@ public class Block extends Rectangle {
 
 	int maxX, maxY;
 
+	// Create block
 	public Block(int x, int y, Block p, Field f) {
 		super(Main_UI.block_size, Main_UI.block_size);
 		posX = x;
@@ -26,6 +27,7 @@ public class Block extends Rectangle {
 
 	}
 
+	// Direction update
 	public void update() {
 		oldPosX = posX;
 		oldPosY = posY;

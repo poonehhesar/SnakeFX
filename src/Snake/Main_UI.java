@@ -19,7 +19,8 @@ public class Main_UI extends Application {
 	static int block_size = 20;
 	int width = 30, height = 20;
 	int il = 5;
-	
+	int speed = 8;
+
 	long then = System.nanoTime();
 
 	boolean changed = false;
@@ -27,79 +28,79 @@ public class Main_UI extends Application {
 	boolean hasNext = false;
 
 	Field f;
-	
+
 	@Override
 	public void start(Stage ps) {
 		VBox root = new VBox(10);
 		root.setPadding(new Insets(10));
 
 		f = new Field(width, height);
+		f.addObs(new Obstacle(f));
 		f.addSnake(new Snake(il, f));
-		
+
 		Label score = new Label("Score: 0 ");
 		score.setFont(Font.font("tahoma", 32));
 
-				
 		AnimationTimer timer = new AnimationTimer() {
 			public void handle(long now) {
-				
-				// speed up the snake
-				if(now - then > 1000000000 / 8) {
+
+				// speed of the snake
+				if (now - then > 1000000000 / speed) {
 					f.update();
 					then = now;
-					score.setText("Score: " +f.score);
+					score.setText("Score: " + f.score);
 					changed = false;
 					if (hasNext) {
 						setDirection(f.snake, nextUpdate);
 						hasNext = false;
 					}
-					
-					if(f.isDead()) {
+
+					if (f.isDead()) {
 						stop();
-						
+
 						Alert al = new Alert(AlertType.INFORMATION);
 						al.setHeaderText("You lost");
-						al.setContentText("Your score is "+f.score);
-						Platform.runLater(al::showAndWait);			
-						
-						al.setOnHidden(e-> { 
+						al.setContentText("Your score is " + f.score);
+						Platform.runLater(al::showAndWait);
+
+
+						al.setOnHidden(e -> {
 							root.getChildren().clear();
 							f = new Field(width, height);
 							f.addSnake(new Snake(il, f));
 							score.setText("Score: 0 ");
 							root.getChildren().addAll(f, score);
+							f.addObs(new Obstacle(f));
+
 							start();
 
-							
 						});
 
 					}
-					
-					
+
 				}
 			}
 		};
 		timer.start();
-		
 
 		root.getChildren().addAll(f, score);
 
 		Scene scene = new Scene(root);
-		
-		scene.setOnKeyPressed (e -> {
-			if(e.getCode().equals(KeyCode.UP) && f.snake.getDirection() != Block.DOWN) {
+
+		scene.setOnKeyPressed(e -> {
+			if (e.getCode().equals(KeyCode.UP) && f.snake.getDirection() != Block.DOWN) {
 				setDirection(f.snake, Block.UP);
 			}
-			if(e.getCode().equals(KeyCode.DOWN) && f.snake.getDirection() != Block.UP) {
+			if (e.getCode().equals(KeyCode.DOWN) && f.snake.getDirection() != Block.UP) {
 				setDirection(f.snake, Block.DOWN);
 			}
-			if(e.getCode().equals(KeyCode.RIGHT) && f.snake.getDirection() != Block.LEFT) {
+			if (e.getCode().equals(KeyCode.RIGHT) && f.snake.getDirection() != Block.LEFT) {
 				setDirection(f.snake, Block.RIGHT);
 			}
-			if(e.getCode().equals(KeyCode.LEFT) && f.snake.getDirection() != Block.RIGHT) {
+			if (e.getCode().equals(KeyCode.LEFT) && f.snake.getDirection() != Block.RIGHT) {
 				setDirection(f.snake, Block.LEFT);
 			}
-			
+
 		});
 
 		ps.setResizable(false);
@@ -108,15 +109,19 @@ public class Main_UI extends Application {
 
 		ps.show();
 	}
-	
+
 	public void setDirection(Snake s, int d) {
-		if(!changed) {
+		if (!changed) {
 			s.setDirection(d);
 			changed = true;
-		}else { 
+		} else {
 			hasNext = true;
 			nextUpdate = d;
-		}		
+		}
+	}
+	
+	public void checkSpeed() {
+		speed = Field.getScore () / 300 + 8;
 	}
 
 	public static void main(String[] args) {

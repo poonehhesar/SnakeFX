@@ -6,6 +6,7 @@ import javafx.scene.shape.Rectangle;
 public class Food extends Rectangle {
 	int posX, posY;
 	
+	// Food block
 	public Food (int x, int y ) {
 		super(Main_UI.block_size, Main_UI.block_size);
 		posX = x;
